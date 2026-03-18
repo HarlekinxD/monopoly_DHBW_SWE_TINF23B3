@@ -1,0 +1,39 @@
+# Private Markdown Datei
+notes_privat.md
+
+# Python Cache der Virtuellen Umgebung nicht pushen
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtualle Umgebung nich pushen
+.venv/
+venv/
+env/
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
