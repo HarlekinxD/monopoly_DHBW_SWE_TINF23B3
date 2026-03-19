@@ -1,5 +1,5 @@
 # Monopoly CLI-Version in Python 
-== Entwickler: 
+Entwickler: 
 - Daniel Lohrengel
 - Vivian Heidt
 - ~~Tobias Kipping~~
@@ -8,7 +8,7 @@
 
 ## Projektziel: 
 
-Dieses Projekt implementiert eine einfache textbasiertes Version von Monopol, welches über ein Command Line Interface (CLI) gespielt werden kann. 
+Dieses Projekt implementiert eine einfache textbasiertes Version von Monopoly, welches über ein Command Line Interface (CLI) gespielt werden kann. 
 Das Projekt wurde mittels der Programmiersprache Python entwickelt unter der Verwendung von Standard Bibliotheken.
 Die Implementierung konzentriert sich bewusst auf die Kernmechaniken des Spiels.
 Komplexe Sonderregeln wurden zugunsten einer klaren Architektur und Verständlichkeit reduziert.
@@ -22,8 +22,7 @@ Die Software aus den offiziellen Spielregeln abgeleitet:
 3. Ausführen der Feldaktion
 4. Übergang zum nächsten Spieler
 
-Für Geldbeträge werden ausschließlich integer verwendet, 
-da das Monopoly-Spiel keine float vorsieht und so Rundungsfehler vermieden werden.
+Für Geldbeträge werden ausschließlich integer verwendet, da das Monopoly-Spiel keine float vorsieht und so Rundungsfehler vermieden werden.
 
 ---
 
