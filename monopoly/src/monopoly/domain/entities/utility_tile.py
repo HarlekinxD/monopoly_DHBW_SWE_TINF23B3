@@ -1,12 +1,14 @@
 from dataclasses import dataclass, field
 
 from monopoly.domain.entities.ownable_tile import OwnableTile
+from monopoly.domain.tile_color import TileColor
 from monopoly.domain.tile_type import TileType
 from monopoly.domain.value_objects.money import Money
 
 
 @dataclass
 class UtilityTile(OwnableTile):
+    color: TileColor = TileColor.WHITE
     utility_multipliers: list[int] = field(default_factory=list)
 
     def __post_init__(self) -> None:
