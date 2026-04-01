@@ -7,6 +7,7 @@ from monopoly.domain.value_objects.money import Money
 
 @dataclass
 class UtilityTile(OwnableTile):
+    color: TileColor = TileColor.WHITE
     utility_multipliers: list[int] = field(default_factory=list)
 
     def __post_init__(self) -> None:
