@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 
 from monopoly.domain.entities.ownable_tile import OwnableTile
+from monopoly.domain.tile_color import TileColor
 from monopoly.domain.tile_type import TileType
 from monopoly.domain.value_objects.money import Money
 
