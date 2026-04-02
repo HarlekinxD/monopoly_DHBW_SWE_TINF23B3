@@ -3,26 +3,24 @@ import pytest
 from monopoly.application.use_cases.start_game import StartGameUseCase
 
 
-def test_start_game_with_two_players_creates_game_state() -> None:
+def test_start_game_with_two_players_creates_game() -> None:
     use_case = StartGameUseCase()
 
-    result = use_case.execute(["Alice", "Bob"])
+    game = use_case.execute(["Alice", "Bob"])
 
-    assert result.is_started is True
-    assert result.current_player_index == 0
-    assert result.current_player_name == "Alice"
-    assert result.board_size == 40
-    assert len(result.players) == 2
+    assert game.is_started is True
+    assert game.current_player_index == 0
+    assert game.current_player.name == "Alice"
+    assert game.board.size() == 40
+    assert len(game.players) == 2
 
 
 def test_start_game_with_seven_players_is_allowed() -> None:
     use_case = StartGameUseCase()
 
-    result = use_case.execute(
-        ["A", "B", "C", "D", "E", "F", "G"]
-    )
+    game = use_case.execute(["A", "B", "C", "D", "E", "F", "G"])
 
-    assert len(result.players) == 7
+    assert len(game.players) == 7
 
 
 def test_start_game_with_one_player_raises_error() -> None:

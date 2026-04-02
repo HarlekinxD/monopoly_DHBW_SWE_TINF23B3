@@ -21,7 +21,6 @@ class Player:
         if not self.name.strip():
             raise ValueError("Player name must not be empty.")
 
-    # Movement
     def move(self, steps: int, board_size: int) -> bool:
         passed_start = self.position.has_passed_start(steps, board_size)
         self.position = self.position.move(steps, board_size)
@@ -30,19 +29,16 @@ class Player:
     def move_to(self, position: Position) -> None:
         self.position = position
 
-    # Money handling
     def pay_money(self, amount: Money) -> None:
         try:
             self.balance = self.balance.subtract(amount)
         except ValueError:
-            # Bankrott-Logik (später ausbauen)
             self.is_bankrupt = True
             raise
 
     def receive_money(self, amount: Money) -> None:
         self.balance = self.balance.add(amount)
 
-    # Ownership
     def add_owned_tile(self, tile_id: int) -> None:
         if tile_id not in self.owned_tile_ids:
             self.owned_tile_ids.append(tile_id)
@@ -50,7 +46,6 @@ class Player:
     def owns_tile(self, tile_id: int) -> bool:
         return tile_id in self.owned_tile_ids
 
-    # Jail
     def send_to_jail(self, jail_position: Position) -> None:
         self.position = jail_position
         self.in_jail = True
