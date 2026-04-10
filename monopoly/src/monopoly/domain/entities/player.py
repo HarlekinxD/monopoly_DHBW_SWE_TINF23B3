@@ -54,3 +54,7 @@ class Player:
     def release_from_jail(self) -> None:
         self.in_jail = False
         self.jail_turns = 0
+
+    def increment_jail_turn(self) -> None:
+        if self.in_jail:
+            self.jail_turns += 1
