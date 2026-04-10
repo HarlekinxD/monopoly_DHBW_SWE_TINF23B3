@@ -3,6 +3,7 @@ import pytest
 from monopoly.presentation.cli.command_parser import CommandParser
 
 
+
 def test_parse_simple_command() -> None:
     parser = CommandParser()
 
@@ -20,7 +21,29 @@ def test_parse_command_with_arguments() -> None:
     assert command == "view"
     assert arguments == ["board"]
 
+def test_parse_buy_command() -> None:
+    parser = CommandParser()
+    command, arguments = parser.parse("buy")
 
+    assert command == "buy"
+    assert arguments == []
+
+
+def test_parse_end_command() -> None:
+    parser = CommandParser()
+    command, arguments = parser.parse("end")
+
+    assert command == "end"
+    assert arguments == []
+
+
+def test_parse_roll_command() -> None:
+    parser = CommandParser()
+    command, arguments = parser.parse("roll")
+
+    assert command == "roll"
+    assert arguments == []
+    
 def test_parse_rejects_empty_command() -> None:
     parser = CommandParser()
 

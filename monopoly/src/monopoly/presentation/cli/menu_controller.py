@@ -1,3 +1,5 @@
+from monopoly.application.use_cases.buy_property import BuyPropertyUseCase
+from monopoly.application.use_cases.end_turn import EndTurnUseCase
 from monopoly.application.use_cases.show_game_state import ShowGameStateUseCase
 from monopoly.application.use_cases.start_game import StartGameUseCase
 from monopoly.application.use_cases.toggle_view import ToggleViewUseCase
@@ -9,6 +11,8 @@ from monopoly.presentation.cli.ownership_renderer import OwnershipRenderer
 class MenuController:
     def __init__(self) -> None:
         self.start_game_use_case = StartGameUseCase()
+        self.buy_property_use_case = BuyPropertyUseCase()
+        self.end_turn_use_case = EndTurnUseCase()
         self.show_game_state_use_case = ShowGameStateUseCase()
         self.toggle_view_use_case = ToggleViewUseCase()
 
@@ -23,7 +27,9 @@ class MenuController:
         self._render(game)
 
         while True:
-            raw_command = input("\nCommand (help/show/toggle/quit): ")
+            raw_command = input(
+                f"\nCurrent player: {game.current_player.name} | Command (help/show/toggle/buy/end/quit): "
+            )
 
             try:
                 command, arguments = self.command_parser.parse(raw_command)
@@ -38,6 +44,19 @@ class MenuController:
             elif command == "toggle":
                 self.toggle_view_use_case.execute(game)
                 self._render(game)
+            elif command == "buy":
+                try:
+                    self.buy_property_use_case.execute(game)
+                    print("Property purchased successfully.")
+                except ValueError as error:
+                    print(f"Buy failed: {error}")
+                self._render(game)
+            elif command == "end":
+                next_player_name = self.end_turn_use_case.execute(game)
+                print(f"Turn ended. Next player: {next_player_name}")
+                self._render(game)
+            elif command == "roll":
+                print("Roll is not connected yet. This will be integrated with play-turn.")
             elif command == "quit":
                 print("Goodbye.")
                 break
@@ -67,4 +86,7 @@ class MenuController:
         print("- help   : show available commands")
         print("- show   : show the current view")
         print("- toggle : switch between board and ownership view")
+        print("- buy    : buy the current tile if possible")
+        print("- end    : end the current player's turn")
+        print("- roll   : placeholder until play-turn is integrated")
         print("- quit   : exit the game")
