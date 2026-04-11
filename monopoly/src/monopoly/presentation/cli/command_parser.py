@@ -2,7 +2,6 @@ class CommandParser:
     VALID_COMMANDS = {
         "help",
         "show",
-        "view",
         "toggle",
         "buy",
         "roll",
