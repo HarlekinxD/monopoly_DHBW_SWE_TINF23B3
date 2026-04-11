@@ -13,13 +13,13 @@ def test_parse_simple_command() -> None:
     assert arguments == []
 
 
-def test_parse_command_with_arguments() -> None:
+def test_parse_toggle_command() -> None:
     parser = CommandParser()
 
-    command, arguments = parser.parse("view board")
+    command, arguments = parser.parse("toggle")
 
-    assert command == "view"
-    assert arguments == ["board"]
+    assert command == "toggle"
+    assert arguments == []
 
 def test_parse_buy_command() -> None:
     parser = CommandParser()

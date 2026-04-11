@@ -2,7 +2,6 @@ from monopoly.domain.entities.game import Game
 from monopoly.domain.entities.special_tile import SpecialTile
 from monopoly.domain.entities.tax_tile import TaxTile
 from monopoly.domain.value_objects.position import Position
-from monopoly.domain.value_objects.money import Money
 
 
 class ResolveTileActionUseCase:
@@ -13,8 +12,9 @@ class ResolveTileActionUseCase:
         tile = game.board.get_tile_at(player.position)
 
         if isinstance(tile, TaxTile):
-            player.pay_money(tile.get_tax_amount())
-            return f"{player.name} paid tax: {tile.get_tax_amount().amount}"
+            tax = tile.get_tax_amount()
+            player.pay_money(tax)
+            return f"{player.name} paid tax: {tax.amount}"
 
         if isinstance(tile, SpecialTile):
             return self._handle_special_tile(game, tile.name)
@@ -34,10 +34,10 @@ class ResolveTileActionUseCase:
             player.send_to_jail(self.JAIL_POSITION)
             return f"{player.name} was sent to jail."
 
-        if tile_name in {"Gemeinschaftsfeld", "Ereignisfeld"}:
-            return f"{tile_name} is not implemented yet."
-
         if tile_name == "Im Gefängnis (Nur zu Besuch)":
             return f"{player.name} is just visiting jail."
+
+        if tile_name in {"Gemeinschaftsfeld", "Ereignisfeld"}:
+            return f"{tile_name} is not implemented yet."
 
         return f"No action defined for tile: {tile_name}"
