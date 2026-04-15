@@ -1,4 +1,5 @@
 from monopoly.application.ports.random_port import RandomPort
+from monopoly.application.use_cases.handle_bankruptcy import HandleBankruptcyUseCase
 from monopoly.application.use_cases.pay_rent import PayRentUseCase
 from monopoly.application.use_cases.resolve_tile_action import ResolveTileActionUseCase
 from monopoly.domain.entities.game import Game
@@ -13,12 +14,19 @@ class PlayTurnUseCase:
         self.random_port = random_port
         self.resolve_tile_action_use_case = ResolveTileActionUseCase()
         self.pay_rent_use_case = PayRentUseCase()
+        self.handle_bankruptcy_use_case = HandleBankruptcyUseCase()
 
     def execute(self, game: Game) -> dict:
+        if game.has_rolled_this_turn:
+            raise ValueError("The current player has already rolled this turn.")
+
         player = game.current_player
 
         if player.in_jail:
             player.increment_jail_turn()
+            game.has_rolled_this_turn = True
+            game.can_buy_current_tile = False
+            game.current_turn_tile_id = player.position.index
             return {
                 "player": player.name,
                 "dice_value": None,
@@ -35,19 +43,27 @@ class PlayTurnUseCase:
 
         tile = game.board.get_tile_at(player.position)
 
+        game.has_rolled_this_turn = True
+        game.current_turn_tile_id = tile.tile_id
+        game.purchased_this_turn = False
+        game.can_buy_current_tile = False
+
         action_message = self.resolve_tile_action_use_case.execute(game)
 
-        can_buy = False
         if isinstance(tile, OwnableTile):
             if not tile.is_owned():
-                can_buy = True
+                game.can_buy_current_tile = True
             elif tile.owner_name != player.name:
-                self.pay_rent_use_case.execute(game, dice_value=dice_value)
+                try:
+                    self.pay_rent_use_case.execute(game, dice_value=dice_value)
+                except ValueError as error:
+                    self.handle_bankruptcy_use_case.execute(game, player)
+                    action_message = str(error)
 
         return {
             "player": player.name,
             "dice_value": dice_value,
             "tile_name": tile.name,
             "message": action_message,
-            "can_buy": can_buy,
+            "can_buy": game.can_buy_current_tile,
         }

@@ -36,3 +36,21 @@ def test_free_parking_has_no_effect() -> None:
 
     assert "Free Parking" in result
     assert player.position.index == 20
+
+def test_community_field_draws_card() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    player = game.current_player
+    player.move_to(Position(2))  # Gemeinschaftsfeld
+
+    result = ResolveTileActionUseCase().execute(game)
+
+    assert "drew" in result
+
+def test_chance_field_draws_card() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    player = game.current_player
+    player.move_to(Position(7))  # Ereignisfeld
+
+    result = ResolveTileActionUseCase().execute(game)
+
+    assert "drew" in result
