@@ -1,3 +1,5 @@
+import os
+
 from monopoly.application.use_cases.buy_property import BuyPropertyUseCase
 from monopoly.application.use_cases.check_winner import CheckWinnerUseCase
 from monopoly.application.use_cases.end_turn import EndTurnUseCase
@@ -29,73 +31,96 @@ class MenuController:
         game = self._create_game()
         has_rolled = False
 
-        print("\nGame created successfully.")
+        game.last_message = "Game created successfully."
         self._render(game)
 
         while True:
             winner = self.check_winner_use_case.execute(game)
             if winner is not None:
-                print(f"\nWinner: {winner}")
+                ranking = self.check_winner_use_case.get_ranking(game)
+                self._clear_screen()
+                print(f"Winner: {winner}")
+                print("Final ranking:")
+                for index, player_name in enumerate(ranking, start=1):
+                    print(f"{index}. {player_name}")
                 break
 
             raw_command = input(
-                f"\nCurrent player: {game.current_player.name} | Command (help/show/toggle/roll/buy/end/quit): "
+                f"\nCurrent player: {game.current_player.name} | "
+                f"Command (help/show/toggle/roll/buy/end/quit): "
             )
 
             try:
                 command, _ = self.command_parser.parse(raw_command)
             except ValueError as error:
-                print(f"Error: {error}")
+                game.last_message = f"Error: {error}"
+                self._render(game)
                 continue
 
             if command == "help":
-                self._show_help()
+                game.last_message = (
+                    "Commands: help, show, toggle, roll, buy, end, quit"
+                )
+                self._render(game)
 
             elif command == "show":
+                game.last_message = "Refreshed current view."
                 self._render(game)
 
             elif command == "toggle":
                 self.toggle_view_use_case.execute(game)
+                game.last_message = f"Switched view to '{game.active_view}'."
                 self._render(game)
 
             elif command == "roll":
                 if has_rolled:
-                    print("You already rolled this turn.")
+                    game.last_message = "You already rolled this turn."
+                    self._render(game)
                     continue
 
                 try:
                     result = self.play_turn_use_case.execute(game)
                     has_rolled = True
-                    print(
-                        f"{result['player']} rolled {result['dice_value']} and landed on {result['tile_name']}."
+
+                    message = (
+                        f"{result['player']} rolled {result['dice_value']} "
+                        f"and landed on {result['tile_name']}. {result['message']}"
                     )
-                    print(result["message"])
+
                     if result["can_buy"]:
-                        print("This tile can be bought. Use 'buy' if you want to purchase it.")
+                        message += " This tile can be bought with 'buy'."
+
+                    game.last_message = message
+
                 except ValueError as error:
-                    print(f"Turn failed: {error}")
+                    game.last_message = f"Turn failed: {error}"
 
                 self._render(game)
 
             elif command == "buy":
                 try:
                     self.buy_property_use_case.execute(game)
-                    print("Property purchased successfully.")
+                    game.last_message = "Property purchased successfully."
                 except ValueError as error:
-                    print(f"Buy failed: {error}")
+                    game.last_message = f"Buy failed: {error}"
+
                 self._render(game)
 
             elif command == "end":
                 next_player_name = self.end_turn_use_case.execute(game)
                 has_rolled = False
-                print(f"Turn ended. Next player: {next_player_name}")
+                game.last_message = f"Turn ended. Next player: {next_player_name}"
                 self._render(game)
 
             elif command == "quit":
+                self._clear_screen()
                 print("Goodbye.")
                 break
 
     def _create_game(self):
+        self._clear_screen()
+        print("=== Monopoly CLI ===")
+
         player_count = int(input("Number of players (2-7): ").strip())
         player_names: list[str] = []
 
@@ -106,6 +131,7 @@ class MenuController:
         return self.start_game_use_case.execute(player_names)
 
     def _render(self, game) -> None:
+        self._clear_screen()
         game = self.show_game_state_use_case.execute(game)
 
         if game.active_view == "board":
@@ -113,12 +139,5 @@ class MenuController:
         else:
             print(self.ownership_renderer.render(game))
 
-    def _show_help(self) -> None:
-        print("Available commands:")
-        print("- help   : show available commands")
-        print("- show   : show the current view")
-        print("- toggle : switch between board and ownership view")
-        print("- roll   : roll dice and move")
-        print("- buy    : buy the current tile if possible")
-        print("- end    : end the current player's turn")
-        print("- quit   : exit the game")
+    def _clear_screen(self) -> None:
+        os.system("cls" if os.name == "nt" else "clear")
