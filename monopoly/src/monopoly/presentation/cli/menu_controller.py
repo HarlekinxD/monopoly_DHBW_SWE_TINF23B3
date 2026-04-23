@@ -11,6 +11,7 @@ from monopoly.infrastructure.rng.python_random_dice import PythonRandomDice
 from monopoly.presentation.cli.board_renderer import BoardRenderer
 from monopoly.presentation.cli.command_parser import CommandParser
 from monopoly.presentation.cli.ownership_renderer import OwnershipRenderer
+from monopoly.application.use_cases.pay_jail_fine import PayJailFineUseCase
 
 
 class MenuController:
@@ -26,6 +27,7 @@ class MenuController:
         self.command_parser = CommandParser()
         self.board_renderer = BoardRenderer()
         self.ownership_renderer = OwnershipRenderer()
+        self.pay_jail_fine_use_case = PayJailFineUseCase()
 
     def run(self) -> None:
         game = self._create_game()
@@ -47,7 +49,7 @@ class MenuController:
 
             raw_command = input(
                 f"\nCurrent player: {game.current_player.name} | "
-                f"Command (help/show/toggle/roll/buy/end/quit): "
+                f"Command (help/show/toggle/roll/buy/bail/end/quit): "
             )
 
             try:
@@ -59,7 +61,7 @@ class MenuController:
 
             if command == "help":
                 game.last_message = (
-                    "Commands: help, show, toggle, roll, buy, end, quit"
+                    "Commands: help, show, toggle, roll, buy, bail, end, quit"
                 )
                 self._render(game)
 
@@ -104,6 +106,13 @@ class MenuController:
                 except ValueError as error:
                     game.last_message = f"Buy failed: {error}"
 
+                self._render(game)
+
+            elif command == "bail":
+                try:
+                    game.last_message = self.pay_jail_fine_use_case.execute(game)
+                except ValueError as error:
+                    game.last_message = f"Bail failed: {error}"
                 self._render(game)
 
             elif command == "end":

@@ -37,3 +37,26 @@ def test_chance_card_can_send_player_to_jail() -> None:
     assert "sent to jail" in result
     assert game.current_player.position.index == 10
     assert game.current_player.in_jail is True
+
+def test_chance_card_move_changes_player_position_persistently() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    use_case = DrawChanceCardUseCase()
+
+    result = use_case.execute(game)
+
+    assert "moved to GO" in result
+    assert game.current_player.position.index == 0
+
+def test_chance_card_go_to_jail_changes_position_persistently() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    use_case = DrawChanceCardUseCase()
+
+    use_case.execute(game)  # GO
+    use_case.execute(game)  # back 3
+    use_case.execute(game)  # pay
+    use_case.execute(game)  # receive
+    result = use_case.execute(game)  # jail
+
+    assert "sent to jail" in result
+    assert game.current_player.position.index == 10
+    assert game.current_player.in_jail is True
