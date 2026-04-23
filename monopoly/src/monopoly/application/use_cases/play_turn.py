@@ -27,6 +27,7 @@ class PlayTurnUseCase:
             game.has_rolled_this_turn = True
             game.can_buy_current_tile = False
             game.current_turn_tile_id = player.position.index
+            game.last_roll = "-"
             return {
                 "player": player.name,
                 "dice_value": None,
@@ -36,6 +37,8 @@ class PlayTurnUseCase:
             }
 
         dice_value = self.random_port.roll_dice()
+        game.last_roll = dice_value
+
         passed_start = player.move(dice_value, game.board.size())
 
         if passed_start:
