@@ -12,25 +12,27 @@ from monopoly.application.use_cases.pay_rent import PayRentUseCase
 from monopoly.application.use_cases.play_turn import PlayTurnUseCase
 from monopoly.application.use_cases.start_game import StartGameUseCase
 
+class FakeRandomPort:
+    def __init__(self, values: list[int]) -> None:
+        self.values = values
+        self.index = 0
 
-class FakeRandomPort(RandomPort):
-    def __init__(self, value: int) -> None:
-        self.value = value
-
-    def roll_dice(self) -> int:
-        return self.value
+    def roll_die(self) -> int:
+        value = self.values[self.index]
+        self.index += 1
+        return value
 
 
 def test_player_does_not_pay_rent_to_self() -> None:
     game = StartGameUseCase().execute(["Alice", "Bob"])
     alice = game.current_player
 
-    PlayTurnUseCase(FakeRandomPort(1)).execute(game)
+    PlayTurnUseCase(FakeRandomPort([1, 2])).execute(game)  # tile 3
     BuyPropertyUseCase().execute(game)
 
     balance_before = alice.balance.amount
 
-    PayRentUseCase().execute(game, dice_value=1)
+    PayRentUseCase().execute(game, dice_value=3)
 
     assert alice.balance.amount == balance_before
 
@@ -95,7 +97,7 @@ def test_player_does_not_pay_rent_to_self() -> None:
     game = StartGameUseCase().execute(["Alice", "Bob"])
     alice = game.current_player
 
-    PlayTurnUseCase(FakeRandomPort(1)).execute(game)
+    PlayTurnUseCase(FakeRandomPort([1, 2])).execute(game)  # tile 3
     BuyPropertyUseCase().execute(game)
 
     balance_before = alice.balance.amount
