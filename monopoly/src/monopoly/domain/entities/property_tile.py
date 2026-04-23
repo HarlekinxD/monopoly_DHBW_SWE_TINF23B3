@@ -15,16 +15,21 @@ class PropertyTile(OwnableTile):
 
     def __post_init__(self) -> None:
         super().__post_init__()
+
         if self.tile_type != TileType.PROPERTY:
             raise ValueError("PropertyTile must have type PROPERTY.")
+
         if self.house_price is None:
-            raise ValueError("A street needs to have house costs.")
+            raise ValueError("A property must have house costs.")
+
         if not self.rent_levels:
-            raise ValueError("A street must have rent levles.")
+            raise ValueError("A property must define rent levels.")
+
         if self.house_count < 0:
-            raise ValueError("The number of houses cant be negative.")
+            raise ValueError("House count cannot be negative.")
+
         if self.house_count >= len(self.rent_levels):
-            raise ValueError("The number of houses doesnt fit the rent levels.")
+            raise ValueError("House count exceeds available rent levels.")
 
     def get_current_rent(self) -> Money:
         return self.rent_levels[self.house_count]
@@ -34,8 +39,11 @@ class PropertyTile(OwnableTile):
 
     def build_house(self) -> None:
         if not self.can_build_house():
-            raise ValueError(f"On field '{self.name}' no house can be build.")
+            raise ValueError(f"No house can be built on '{self.name}'.")
         self.house_count += 1
+
+    def has_hotel(self) -> bool:
+        return self.house_count == 5
 
     def clear_owner(self) -> None:
         super().clear_owner()

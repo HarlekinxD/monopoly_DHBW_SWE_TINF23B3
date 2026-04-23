@@ -1,4 +1,5 @@
 from monopoly.domain.entities.game import Game
+from monopoly.domain.entities.property_tile import PropertyTile
 
 
 class OwnershipRenderer:
@@ -7,13 +8,22 @@ class OwnershipRenderer:
         lines.append("=== OWNERSHIP VIEW ===")
 
         for player in game.players:
-            tile_names: list[str] = []
+            tile_descriptions: list[str] = []
 
             for tile in game.board.tiles:
                 if tile.tile_id in player.owned_tile_ids:
-                    tile_names.append(tile.name)
+                    if isinstance(tile, PropertyTile):
+                        if tile.house_count == 5:
+                            building = "hotel"
+                        elif tile.house_count > 0:
+                            building = f"{tile.house_count} house(s)"
+                        else:
+                            building = "no houses"
+                        tile_descriptions.append(f"{tile.name} ({building})")
+                    else:
+                        tile_descriptions.append(tile.name)
 
-            owned = ", ".join(tile_names) if tile_names else "none"
+            owned = ", ".join(tile_descriptions) if tile_descriptions else "none"
 
             lines.append(
                 f"{player.name} | money={player.balance.amount} | "
