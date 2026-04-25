@@ -1,6 +1,6 @@
 from monopoly.domain.card_type import CardType
 from monopoly.domain.value_objects.money import Money
-from monopoly.domain.entities.card import (MoneyCard, MoveCard, JailFreeCard, PlayerInteractionMoneyCard, PropertyRepairsCard)
+from monopoly.domain.entities.card import (MoneyCard, MoveCard, JailFreeCard, NearestRailroadCard, PlayerInteractionMoneyCard, PropertyRepairsCard, RelativeMoveCard)
 #import the deck class to create the decks with the cards
 from monopoly.domain.entities.deck import Deck
 
@@ -29,3 +29,23 @@ def create_gemeinschaftskarten_deck() -> Deck:
         MoneyCard(card_id=16, card_type=CardType.GEMEINSCHAFTSKARTE, txt="Du hast im Kreuzworträtselwettbewerb gewonnen 📰✏️. Ziehe 100M 💵 ein.", amount=Money(100), is_penalty=False),
     ]
     return Deck(deck_type=CardType.GEMEINSCHAFTSKARTE, cards=karten)
+
+def create_ereigniskarten_deck() -> Deck:
+    karten = [
+        MoneyCard(card_id=1, card_type=CardType.EREIGNISKARTE, txt="Zahle Schulgeld 150M 💵.", amount=Money(150), is_penalty=True),
+        JailFreeCard(card_id=2, card_type=CardType.EREIGNISKARTE, txt="Du kommst aus dem Gefängnis frei 🗝️. (Karte behalten)"),
+        MoneyCard(card_id=3, card_type=CardType.EREIGNISKARTE, txt="Strafe für zu schnelles Fahren 🚗. Zahle 15M 💵.", amount=Money(15), is_penalty=True),
+        PlayerInteractionMoneyCard(card_id=4, card_type=CardType.EREIGNISKARTE, txt="Du bist zum Vorstand gewählt worden. Zahle jedem Spieler 50M 💵.", amount_per_player=Money(50), player_pays_others=True),
+        MoveCard(card_id=5, card_type=CardType.EREIGNISKARTE, txt="Gehe in das Gefängnis 🚓. Begib dich direkt dorthin. Gehe NICHT über Los und ziehe NICHT 200M 💵 ein.", target_position_index=10),
+        MoneyCard(card_id=6, card_type=CardType.EREIGNISKARTE, txt="Miete und Anleihezinsen werden fällig, die Bank zahlt dir 150M 💵.", amount=Money(150), is_penalty=False),
+        RelativeMoveCard(card_id=7, card_type=CardType.EREIGNISKARTE, txt="Gehe 3 Felder zurück ⬅️.", steps=-3),
+        MoveCard(card_id=8, card_type=CardType.EREIGNISKARTE, txt="Rücke vor bis zum Opernplatz 🎭. Wenn du über Los kommst, ziehe 200M 💵 ein.", target_position_index=24),
+        MoneyCard(card_id=9, card_type=CardType.EREIGNISKARTE, txt="Die Bank zahlt dir eine Dividende von 50M 💵.", amount=Money(50), is_penalty=False),
+        MoneyCard(card_id=10, card_type=CardType.EREIGNISKARTE, txt="Du hast beim Kreuzworträtselwettbewerb gewonnen 📰✏️. Ziehe 100M 💵 ein.", amount=Money(100), is_penalty=False),
+        MoveCard(card_id=11, card_type=CardType.EREIGNISKARTE, txt="Rücke vor bis zur Seestraße 🚢. Wenn du über Los kommst, ziehe 200M 💵 ein.", target_position_index=11),
+        MoveCard(card_id=12, card_type=CardType.EREIGNISKARTE, txt="Mache einen Ausflug zum Südbahnhof 🚉. Wenn du über Los kommst, ziehe 200M 💵 ein.", target_position_index=5),
+        MoveCard(card_id=13, card_type=CardType.EREIGNISKARTE, txt="Rücke vor bis auf Los 🏁.", target_position_index=0),
+        MoveCard(card_id=14, card_type=CardType.EREIGNISKARTE, txt="Rücke vor bis zur Schlossallee 🏰.", target_position_index=39),
+        NearestRailroadCard(card_id=15, card_type=CardType.EREIGNISKARTE, txt="Rücke vor bis zum nächsten Bahnhof 🚆. Der Eigentümer erhält die doppelte Miete."),
+        PropertyRepairsCard(card_id=16, card_type=CardType.EREIGNISKARTE, txt="Lasse alle deine Häuser renovieren 🏗️. Zahle an die Bank 25M für jedes Haus und 100M für jedes Hotel.", cost_per_house=Money(25), cost_per_hotel=Money(100)),
+    ]
