@@ -1,9 +1,10 @@
 from monopoly.application.use_cases.build_house import BuildHouseUseCase
 from monopoly.application.use_cases.start_game import StartGameUseCase
+from monopoly.domain.entities.game import Game
 from monopoly.domain.value_objects.position import Position
 
 
-def _assign_property_to_player(game, tile_id: int, player_name: str) -> None:
+def _assign_property_to_player(game: Game, tile_id: int, player_name: str) -> None:
     tile = game.board.get_tile_at(Position(tile_id))
     tile.buy(player_name)
     player = game.current_player
@@ -19,7 +20,9 @@ def test_fifth_build_creates_hotel() -> None:
     _assign_property_to_player(game, 3, "Alice")
 
     tile = game.board.get_tile_at(Position(1))
+    other_tile = game.board.get_tile_at(Position(3))
     tile.house_count = 4
+    other_tile.house_count = 4
     player.move_to(Position(1))
 
     result = BuildHouseUseCase().execute(game)

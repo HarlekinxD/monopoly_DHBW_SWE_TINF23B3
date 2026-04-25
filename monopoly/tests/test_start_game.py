@@ -1,6 +1,7 @@
 import pytest
 
 from monopoly.application.use_cases.start_game import StartGameUseCase
+from monopoly.domain.token import Token
 
 
 def test_start_game_with_two_players_creates_game() -> None:
@@ -49,3 +50,17 @@ def test_start_game_rejects_duplicate_names() -> None:
 
     with pytest.raises(ValueError, match="must be unique"):
         use_case.execute(["Alice", "Alice"])
+
+
+def test_start_game_assigns_default_tokens_in_order() -> None:
+    use_case = StartGameUseCase()
+
+    game = use_case.execute(["A", "B", "C", "D", "E", "F", "G"])
+
+    assert game.players[0].token == Token.SHOE
+    assert game.players[1].token == Token.WHEELBARROW
+    assert game.players[2].token == Token.HAT
+    assert game.players[3].token == Token.CAR
+    assert game.players[4].token == Token.SHIP
+    assert game.players[5].token == Token.IRON
+    assert game.players[6].token == Token.DOG
