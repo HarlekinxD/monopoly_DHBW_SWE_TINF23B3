@@ -1,17 +1,14 @@
-#Enum fixed number of player tokens
-
 from enum import Enum
 
 
-
 class Token(Enum):
+    SHOE = "Shoe"
     HAT = "Hat"
     CAR = "Car"
     DOG = "Dog"
     SHIP = "Ship"
-    SHOE = "Shoe"
     WHEELBARROW = "Wheelbarrow"
-    CAT = "Cat"
+    IRON = "Iron"
 
     def __str__(self) -> str:
         return self.value
