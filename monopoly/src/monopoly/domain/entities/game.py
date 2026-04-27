@@ -23,6 +23,8 @@ class Game:
     last_roll: int | str = "-"
     last_message: str = ""
 
+    consecutive_doubles_count: int = 0
+
     def __post_init__(self) -> None:
         if len(self.players) < 2 or len(self.players) > 7:
             raise ValueError("A Monopoly game requires 2 to 7 players.")
@@ -38,7 +40,7 @@ class Game:
         return [player for player in self.players if not player.is_bankrupt]
 
     def eliminate_player(self, player: Player) -> None:
-        if player.is_bankrupt and player.name not in self.eliminated_players:
+        if player.name not in self.eliminated_players:
             self.eliminated_players.append(player.name)
 
     def next_player(self) -> None:
@@ -62,6 +64,7 @@ class Game:
         self.purchased_this_turn = False
         self.current_turn_tile_id = None
         self.last_roll = "-"
+        self.consecutive_doubles_count = 0
 
     def toggle_view(self) -> None:
         self.active_view = "ownership" if self.active_view == "board" else "board"
