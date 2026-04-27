@@ -1,6 +1,6 @@
 class CommandParser:
     
-    VALID_COMMANDS = {"help", "show", "toggle", "roll", "buy", "build", "end", "quit", "bail", "save", "load", "sell"}
+    VALID_COMMANDS = {"help", "show", "toggle", "roll", "buy", "build", "end", "quit", "bail", "save", "load", "sell", "use_card"}
 
     def parse(self, raw_command: str) -> tuple[str, list[str]]:
         command = raw_command.strip().lower()

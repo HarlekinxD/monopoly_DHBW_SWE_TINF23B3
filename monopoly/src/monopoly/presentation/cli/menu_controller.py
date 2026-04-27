@@ -17,6 +17,7 @@ from monopoly.presentation.cli.command_parser import CommandParser
 from monopoly.presentation.cli.ownership_renderer import OwnershipRenderer
 from monopoly.application.use_cases.pay_jail_fine import PayJailFineUseCase
 from monopoly.application.use_cases.build_house import BuildHouseUseCase
+from monopoly.application.use_cases.use_jail_free_card import UseJailFreeCardUseCase
 
 
 class MenuController:
@@ -31,6 +32,7 @@ class MenuController:
         self.pay_jail_fine_use_case = PayJailFineUseCase()
         self.build_house_use_case = BuildHouseUseCase()
         self.sell_building_use_case = SellBuildingUseCase()
+        self.use_jail_free_card_use_case = UseJailFreeCardUseCase()
 
         # Persistence - mit saves/ Verzeichnis
         save_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "saves", "game_save.json")
@@ -62,7 +64,7 @@ class MenuController:
 
             raw_command = input(
                 f"\nCurrent player: {game.current_player.name} | "
-                f"Command (help/show/toggle/roll/buy/build/sell/end/bail/save/load/quit): "
+                f"Command (help/show/toggle/roll/buy/build/sell/end/bail/use_card/save/load/quit): "
             )
 
             try:
@@ -74,7 +76,7 @@ class MenuController:
 
             if command == "help":
                 game.last_message = (
-                    "Commands: help, show, toggle, roll, buy, build, sell, end, bail, save, load, quit"
+                    "Commands: help, show, toggle, roll, buy, build, sell, end, bail, use_card, save, load, quit"
                 )
                 self._render(game)
 
@@ -135,6 +137,13 @@ class MenuController:
                     game.last_message = self.pay_jail_fine_use_case.execute(game)
                 except ValueError as error:
                     game.last_message = f"Bail failed: {error}"
+                self._render(game)
+
+            elif command == "use_card":
+                try:
+                    game.last_message = self.use_jail_free_card_use_case.execute(game)
+                except ValueError as error:
+                    game.last_message = f"Use card failed: {error}"
                 self._render(game)
 
             elif command == "build":

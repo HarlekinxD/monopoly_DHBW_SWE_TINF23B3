@@ -16,6 +16,7 @@ class Player:
     is_bankrupt: bool = False
     in_jail: bool = False
     jail_turns: int = 0
+    get_out_of_jail_free_cards: int = 0
 
     def __post_init__(self) -> None:
         if not self.name.strip():
@@ -58,3 +59,12 @@ class Player:
     def increment_jail_turn(self) -> None:
         if self.in_jail:
             self.jail_turns += 1
+
+    def add_jail_free_card(self) -> None:
+        self.get_out_of_jail_free_cards += 1
+
+    def use_jail_free_card(self) -> bool:
+        if self.get_out_of_jail_free_cards > 0:
+            self.get_out_of_jail_free_cards -= 1
+            return True
+        return False

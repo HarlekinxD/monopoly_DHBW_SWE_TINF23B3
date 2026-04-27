@@ -33,6 +33,10 @@ class DrawChanceCardUseCase:
                 action="go_to_jail",
                 target_position=10,
             ),
+            ChanceCard(
+                title="Get out of jail free",
+                action="get_out_of_jail_free",
+            ),
         ]
 
     def execute(self, game: Game) -> str:
@@ -66,5 +70,9 @@ class DrawChanceCardUseCase:
         if card.action == "go_to_jail":
             player.send_to_jail(Position(card.target_position))
             return f"{player.name} drew '{card.title}' and was sent to jail."
+
+        if card.action == "get_out_of_jail_free":
+            player.add_jail_free_card()
+            return f"{player.name} drew '{card.title}' and kept the card."
 
         return f"{player.name} drew '{card.title}', but no action was applied."

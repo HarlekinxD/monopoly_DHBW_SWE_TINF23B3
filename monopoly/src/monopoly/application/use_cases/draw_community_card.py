@@ -33,6 +33,10 @@ class DrawCommunityCardUseCase:
                 action="receive_money",
                 amount=100,
             ),
+            CommunityCard(
+                title="Get out of jail free",
+                action="get_out_of_jail_free",
+            ),
         ]
 
     def execute(self, game: Game) -> str:
@@ -61,5 +65,9 @@ class DrawCommunityCardUseCase:
         if card.action == "go_to_jail":
             player.send_to_jail(Position(card.target_position))
             return f"{player.name} drew '{card.title}' and was sent to jail."
+
+        if card.action == "get_out_of_jail_free":
+            player.add_jail_free_card()
+            return f"{player.name} drew '{card.title}' and kept the card."
 
         return f"{player.name} drew '{card.title}', but no action was applied."

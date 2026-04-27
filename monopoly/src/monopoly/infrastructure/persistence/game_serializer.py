@@ -47,6 +47,7 @@ class GameSerializer:
             "is_bankrupt": player.is_bankrupt,
             "in_jail": player.in_jail,
             "jail_turns": player.jail_turns,
+            "get_out_of_jail_free_cards": player.get_out_of_jail_free_cards,
         }
 
     def _serialize_tile(self, tile: Tile) -> dict[str, Any]:

@@ -53,7 +53,7 @@ class GameDeserializer:
         token_name = payload["token"]
         token = Token(token_name) if token_name is not None else None
 
-        return Player(
+        player = Player(
             name=str(payload["name"]),
             position=Position(int(payload["position"])),
             balance=Money(int(payload["balance"])),
@@ -63,6 +63,8 @@ class GameDeserializer:
             in_jail=bool(payload["in_jail"]),
             jail_turns=int(payload["jail_turns"]),
         )
+        player.get_out_of_jail_free_cards = int(payload.get("get_out_of_jail_free_cards", 0))
+        return player
 
     def _deserialize_tile(self, payload: Mapping[str, Any]) -> Tile:
         # Je nach tile_class die passende Entitaet bauen

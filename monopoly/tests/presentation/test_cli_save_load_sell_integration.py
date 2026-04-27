@@ -206,7 +206,7 @@ class TestCommandParserIntegration:
         from monopoly.presentation.cli.command_parser import CommandParser
 
         parser = CommandParser()
-        expected_commands = {"help", "show", "toggle", "roll", "buy", "build", "sell", "end", "quit", "bail", "save", "load"}
+        expected_commands = {"help", "show", "toggle", "roll", "buy", "build", "sell", "end", "quit", "bail", "save", "load", "use_card"}
         assert parser.VALID_COMMANDS == expected_commands
 
 
