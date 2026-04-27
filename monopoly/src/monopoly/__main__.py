@@ -1,0 +1,8 @@
+"""
+Entry point for the Monopoly CLI application.
+"""
+from monopoly.presentation.cli.main import main
+
+
+if __name__ == "__main__":
+    main()

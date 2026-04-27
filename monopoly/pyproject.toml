@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "monopoly"
+version = "1.0.0"
+description = "A text-based Monopoly CLI game implementation"
+authors = [
+    {name = "Daniel Lohrengel"},
+    {name = "Vivian Heidt"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+monopoly = "monopoly.presentation.cli.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

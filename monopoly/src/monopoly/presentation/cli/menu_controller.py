@@ -7,7 +7,11 @@ from monopoly.application.use_cases.play_turn import PlayTurnUseCase
 from monopoly.application.use_cases.show_game_state import ShowGameStateUseCase
 from monopoly.application.use_cases.start_game import StartGameUseCase
 from monopoly.application.use_cases.toggle_view import ToggleViewUseCase
+from monopoly.application.use_cases.save_game import SaveGameUseCase
+from monopoly.application.use_cases.load_game import LoadGameUseCase
+from monopoly.application.use_cases.sell_building import SellBuildingUseCase
 from monopoly.infrastructure.rng.python_random_dice import PythonRandomDice
+from monopoly.infrastructure.persistence.json_game_repository import JsonGameRepository
 from monopoly.presentation.cli.board_renderer import BoardRenderer
 from monopoly.presentation.cli.command_parser import CommandParser
 from monopoly.presentation.cli.ownership_renderer import OwnershipRenderer
@@ -24,12 +28,19 @@ class MenuController:
         self.toggle_view_use_case = ToggleViewUseCase()
         self.play_turn_use_case = PlayTurnUseCase(PythonRandomDice())
         self.check_winner_use_case = CheckWinnerUseCase()
+        self.pay_jail_fine_use_case = PayJailFineUseCase()
+        self.build_house_use_case = BuildHouseUseCase()
+        self.sell_building_use_case = SellBuildingUseCase()
+
+        # Persistence - mit saves/ Verzeichnis
+        save_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "saves", "game_save.json")
+        self.game_repository = JsonGameRepository(save_file_path)
+        self.save_game_use_case = SaveGameUseCase(self.game_repository)
+        self.load_game_use_case = LoadGameUseCase(self.game_repository)
 
         self.command_parser = CommandParser()
         self.board_renderer = BoardRenderer()
         self.ownership_renderer = OwnershipRenderer()
-        self.pay_jail_fine_use_case = PayJailFineUseCase()
-        self.build_house_use_case = BuildHouseUseCase()
 
     def run(self) -> None:
         game = self._create_game()
@@ -51,7 +62,7 @@ class MenuController:
 
             raw_command = input(
                 f"\nCurrent player: {game.current_player.name} | "
-                f"Command (help/show/toggle/roll/buy/build/end/bail/quit): "
+                f"Command (help/show/toggle/roll/buy/build/sell/end/bail/save/load/quit): "
             )
 
             try:
@@ -63,7 +74,7 @@ class MenuController:
 
             if command == "help":
                 game.last_message = (
-                    "Commands: help, show, toggle, roll, buy, build, end, bail, quit"
+                    "Commands: help, show, toggle, roll, buy, build, sell, end, bail, save, load, quit"
                 )
                 self._render(game)
 
@@ -122,6 +133,29 @@ class MenuController:
                     game.last_message = self.build_house_use_case.execute(game)
                 except ValueError as error:
                     game.last_message = f"Build failed: {error}"
+                self._render(game)
+
+            elif command == "sell":
+                try:
+                    game.last_message = self.sell_building_use_case.execute(game)
+                except ValueError as error:
+                    game.last_message = f"Sell failed: {error}"
+                self._render(game)
+
+            elif command == "save":
+                try:
+                    self.save_game_use_case.execute(game)
+                    game.last_message = "Game saved successfully."
+                except Exception as error:
+                    game.last_message = f"Save failed: {error}"
+                self._render(game)
+
+            elif command == "load":
+                try:
+                    game = self.load_game_use_case.execute()
+                    game.last_message = "Game loaded successfully."
+                except Exception as error:
+                    game.last_message = f"Load failed: {error}"
                 self._render(game)
 
             elif command == "end":
