@@ -42,6 +42,9 @@ class GameDeserializer:
             current_round=int(payload["current_round"]),
             last_roll=payload["last_roll"],
             last_message=str(payload["last_message"]),
+            last_die_one=payload.get("last_die_one"),
+            last_die_two=payload.get("last_die_two"),
+            last_is_double=bool(payload.get("last_is_double", False)),
         )
         return game
 

@@ -31,6 +31,9 @@ class GameSerializer:
             "current_round": game.current_round,
             "last_roll": game.last_roll,
             "last_message": game.last_message,
+            "last_die_one": game.last_die_one,
+            "last_die_two": game.last_die_two,
+            "last_is_double": game.last_is_double,
         }
 
     def _serialize_player(self, player: Any) -> dict[str, Any]:

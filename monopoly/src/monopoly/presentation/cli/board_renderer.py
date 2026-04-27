@@ -150,6 +150,9 @@ class BoardRenderer:
         current_round = getattr(game, "current_round", 1)
         last_roll = getattr(game, "last_roll", "-")
         last_message = getattr(game, "last_message", "")
+        last_die_one = getattr(game, "last_die_one", None)
+        last_die_two = getattr(game, "last_die_two", None)
+        last_is_double = getattr(game, "last_is_double", False)
 
         player = game.current_player
         tile_name = game.board.get_tile_at(player.position).name
@@ -173,6 +176,21 @@ class BoardRenderer:
                 inner_text = value.ljust(inner)
             return (" " * left_pad) + "|" + inner_text + "|" + (" " * right_pad)
 
+        def dice_face(value: int | None) -> str:
+            faces = {
+                1: "⚀",
+                2: "⚁",
+                3: "⚂",
+                4: "⚃",
+                5: "⚄",
+                6: "⚅",
+            }
+            return faces.get(value, "-")
+
+        dice_text = f"{dice_face(last_die_one)} {dice_face(last_die_two)}"
+        if last_is_double and last_die_one is not None:
+            dice_text = f"{dice_text} PASCH"
+
         status_box = [
             border(),
             text("MONOPOLY", "center"),
@@ -183,6 +201,7 @@ class BoardRenderer:
             text(f"FELD: {player.position.index}"),
             text(f"NAME: {self._short(tile_name, panel_width - 8)}"),
             text(f"WURF: {last_roll}"),
+            text(f"WUERFEL: {self._short(dice_text, panel_width - 10)}"),
             text(f"AKTION: {self._short(last_message, panel_width - 10)}"),
             border(),
         ]

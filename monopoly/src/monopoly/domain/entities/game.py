@@ -22,6 +22,9 @@ class Game:
     current_round: int = 1
     last_roll: int | str = "-"
     last_message: str = ""
+    last_die_one: int | None = None
+    last_die_two: int | None = None
+    last_is_double: bool = False
 
     consecutive_doubles_count: int = 0
 
@@ -64,6 +67,9 @@ class Game:
         self.purchased_this_turn = False
         self.current_turn_tile_id = None
         self.last_roll = "-"
+        self.last_die_one = None
+        self.last_die_two = None
+        self.last_is_double = False
         self.consecutive_doubles_count = 0
 
     def toggle_view(self) -> None:

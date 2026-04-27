@@ -13,6 +13,7 @@ from monopoly.application.use_cases.start_game import StartGameUseCase
 from monopoly.application.use_cases.sell_building import SellBuildingUseCase
 from monopoly.application.use_cases.play_turn import PlayTurnUseCase
 from monopoly.domain.entities.game import Game
+from monopoly.domain.value_objects.money import Money
 from monopoly.domain.value_objects.position import Position
 from monopoly.infrastructure.persistence.json_game_repository import JsonGameRepository
 from monopoly.infrastructure.rng.python_random_dice import PythonRandomDice
@@ -30,7 +31,7 @@ class TestSaveLoadGameWorkflow:
             # Create game
             original_game = StartGameUseCase().execute(["Alice", "Bob", "Charlie"])
             original_game.current_player.move_to(Position(5))
-            original_game.current_player.pay_rent(100)
+            original_game.current_player.pay_money(Money(100))
 
             # Save
             SaveGameUseCase(repository).execute(original_game)
@@ -42,7 +43,7 @@ class TestSaveLoadGameWorkflow:
             # Verify
             assert loaded_game is not None
             assert loaded_game.current_player.name == original_game.current_player.name
-            assert loaded_game.current_player.position.position_id == 5
+            assert loaded_game.current_player.position.index == 5
             assert loaded_game.current_player.balance.amount == original_game.current_player.balance.amount
 
     def test_save_file_is_valid_json(self) -> None:
@@ -231,8 +232,8 @@ class TestGameStatePersistence:
             alice.add_owned_tile(1)
 
             # Bob pays alice rent
-            alice.receive_money(50)
-            bob.pay_rent(50)
+            alice.receive_money(Money(50))
+            bob.pay_money(Money(50))
 
             # Save
             SaveGameUseCase(repository).execute(game)

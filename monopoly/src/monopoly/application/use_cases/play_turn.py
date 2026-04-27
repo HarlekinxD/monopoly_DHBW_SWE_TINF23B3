@@ -32,6 +32,9 @@ class PlayTurnUseCase:
         is_double = die_one == die_two
 
         game.last_roll = dice_value
+        game.last_die_one = die_one
+        game.last_die_two = die_two
+        game.last_is_double = is_double
 
         if player.in_jail:
             jail_result = self.attempt_leave_jail_use_case.execute(
@@ -48,6 +51,9 @@ class PlayTurnUseCase:
                 return {
                     "player": player.name,
                     "dice_value": dice_value,
+                    "die_one": die_one,
+                    "die_two": die_two,
+                    "is_double": is_double,
                     "tile_name": game.board.get_tile_at(player.position).name,
                     "message": jail_result["message"],
                     "can_buy": False,
@@ -76,6 +82,9 @@ class PlayTurnUseCase:
             return {
                 "player": player.name,
                 "dice_value": dice_value,
+                "die_one": die_one,
+                "die_two": die_two,
+                "is_double": is_double,
                 "tile_name": game.board.get_tile_at(player.position).name,
                 "message": f"{player.name} rolled 3 doubles and was sent to jail.",
                 "can_buy": False,
@@ -126,9 +135,8 @@ class PlayTurnUseCase:
         if prefix_message:
             action_message = f"{prefix_message} {action_message}"
 
-        is_double = game.last_roll == dice_value and game.consecutive_doubles_count > 0
-
-        if is_double and not is_double_from_jail and not player.in_jail:
+        # Check if this is a double (use game.last_is_double which was set at start of execute)
+        if game.last_is_double and not is_double_from_jail and not player.in_jail:
             game.has_rolled_this_turn = False
         else:
             game.has_rolled_this_turn = True
@@ -136,6 +144,9 @@ class PlayTurnUseCase:
         return {
             "player": player.name,
             "dice_value": dice_value,
+            "die_one": game.last_die_one,
+            "die_two": game.last_die_two,
+            "is_double": game.last_is_double,
             "tile_name": tile.name,
             "message": action_message,
             "can_buy": game.can_buy_current_tile,

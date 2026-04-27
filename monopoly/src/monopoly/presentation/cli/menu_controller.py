@@ -95,17 +95,26 @@ class MenuController:
 
                 try:
                     result = self.play_turn_use_case.execute(game)
-                    has_rolled = True
 
+                    dice_display = f"{result.get('die_one', '-')}/{result.get('die_two', '-')}"
                     message = (
                         f"{result['player']} rolled {result['dice_value']} "
-                        f"and landed on {result['tile_name']}. {result['message']}"
+                        f"({dice_display}) and landed on {result['tile_name']}. {result['message']}"
                     )
+
+                    if result.get("is_double"):
+                        if game.consecutive_doubles_count >= 3:
+                            message += " You rolled 3 doubles and were sent to jail!"
+                        else:
+                            message += " Pasch! You may roll again."
 
                     if result["can_buy"]:
                         message += " This tile can be bought with 'buy'."
 
                     game.last_message = message
+
+                    # Sync the has_rolled flag with game state after roll
+                    has_rolled = game.has_rolled_this_turn
 
                 except ValueError as error:
                     game.last_message = f"Turn failed: {error}"
@@ -153,6 +162,7 @@ class MenuController:
             elif command == "load":
                 try:
                     game = self.load_game_use_case.execute()
+                    has_rolled = game.has_rolled_this_turn
                     game.last_message = "Game loaded successfully."
                 except Exception as error:
                     game.last_message = f"Load failed: {error}"
@@ -190,6 +200,10 @@ class MenuController:
             print(self.board_renderer.render(game))
         else:
             print(self.ownership_renderer.render(game))
+
+        if game.last_message:
+            print()
+            print(game.last_message)
 
     def _clear_screen(self) -> None:
         os.system("cls" if os.name == "nt" else "clear")
