@@ -78,7 +78,7 @@
         "name": "Chausseestraße",
         "tile_type": "property",
         "price": 100,
-        "owner_name": null,
+        "owner_name": "Daniel",
         "color": "cyan",
         "house_price": 50,
         "rent_levels": [
@@ -103,7 +103,7 @@
         "name": "Elisenstraße",
         "tile_type": "property",
         "price": 100,
-        "owner_name": null,
+        "owner_name": "Daniel",
         "color": "cyan",
         "house_price": 50,
         "rent_levels": [
@@ -122,7 +122,7 @@
         "name": "Poststraße",
         "tile_type": "property",
         "price": 120,
-        "owner_name": null,
+        "owner_name": "Vivian",
         "color": "cyan",
         "house_price": 50,
         "rent_levels": [
@@ -166,7 +166,7 @@
         "name": "Elektrizitätswerk",
         "tile_type": "utility",
         "price": 150,
-        "owner_name": null,
+        "owner_name": "Daniel",
         "color": "white",
         "utility_multipliers": [
           4,
@@ -179,7 +179,7 @@
         "name": "Hafenstraße",
         "tile_type": "property",
         "price": 140,
-        "owner_name": null,
+        "owner_name": "Daniel",
         "color": "pink",
         "house_price": 100,
         "rent_levels": [
@@ -275,7 +275,7 @@
         "name": "Berliner Straße",
         "tile_type": "property",
         "price": 200,
-        "owner_name": null,
+        "owner_name": "Daniel",
         "color": "orange",
         "house_price": 100,
         "rent_levels": [
@@ -300,7 +300,7 @@
         "name": "Theaterstraße",
         "tile_type": "property",
         "price": 220,
-        "owner_name": null,
+        "owner_name": "Vivian",
         "color": "red",
         "house_price": 150,
         "rent_levels": [
@@ -396,7 +396,7 @@
         "name": "Schillerstraße",
         "tile_type": "property",
         "price": 260,
-        "owner_name": null,
+        "owner_name": "Vivian",
         "color": "yellow",
         "house_price": 150,
         "rent_levels": [
@@ -428,7 +428,7 @@
         "name": "Goethestraße",
         "tile_type": "property",
         "price": 280,
-        "owner_name": null,
+        "owner_name": "Vivian",
         "color": "yellow",
         "house_price": 150,
         "rent_levels": [
@@ -497,7 +497,7 @@
         "name": "Bahnhofstraße",
         "tile_type": "property",
         "price": 320,
-        "owner_name": null,
+        "owner_name": "Vivian",
         "color": "green",
         "house_price": 200,
         "rent_levels": [
@@ -580,35 +580,52 @@
   "players": [
     {
       "name": "Daniel",
-      "position": 0,
-      "balance": 1500,
+      "position": 12,
+      "balance": 1198,
       "token": "Shoe",
-      "owned_tile_ids": [],
+      "owned_tile_ids": [
+        6,
+        12,
+        8,
+        13,
+        19
+      ],
       "is_bankrupt": false,
       "in_jail": false,
-      "jail_turns": 0
+      "jail_turns": 0,
+      "get_out_of_jail_free_cards": 0
     },
     {
-      "name": "Sven",
-      "position": 0,
-      "balance": 1500,
+      "name": "Vivian",
+      "position": 4,
+      "balance": 312,
       "token": "Wheelbarrow",
-      "owned_tile_ids": [],
+      "owned_tile_ids": [
+        9,
+        27,
+        34,
+        21,
+        29
+      ],
       "is_bankrupt": false,
       "in_jail": false,
-      "jail_turns": 0
+      "jail_turns": 0,
+      "get_out_of_jail_free_cards": 0
     }
   ],
-  "current_player_index": 0,
-  "active_view": "board",
+  "current_player_index": 1,
+  "active_view": "ownership",
   "is_started": true,
-  "has_rolled_this_turn": false,
+  "has_rolled_this_turn": true,
   "consecutive_doubles_count": 0,
   "can_buy_current_tile": false,
   "purchased_this_turn": false,
-  "current_turn_tile_id": null,
+  "current_turn_tile_id": 4,
   "eliminated_players": [],
-  "current_round": 1,
-  "last_roll": "-",
-  "last_message": "Game created successfully."
+  "current_round": 9,
+  "last_roll": 7,
+  "last_message": "Vivian rolled 7 (1/6) and landed on Einkommenssteuer. Vivian paid tax: 200",
+  "last_die_one": 1,
+  "last_die_two": 6,
+  "last_is_double": false
 }
