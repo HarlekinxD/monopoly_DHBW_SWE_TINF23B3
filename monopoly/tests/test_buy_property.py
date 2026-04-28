@@ -19,7 +19,7 @@ class FakeRandomPort:
 def test_cannot_buy_before_roll() -> None:
     game = StartGameUseCase().execute(["Alice", "Bob"])
 
-    with pytest.raises(ValueError, match="must roll before"):
+    with pytest.raises(ValueError, match="cannot buy"):
         BuyPropertyUseCase().execute(game)
 
 
@@ -43,5 +43,5 @@ def test_cannot_buy_owned_property() -> None:
     game.next_player()
     PlayTurnUseCase(FakeRandomPort([1, 2])).execute(game)  # Bob -> tile 3
 
-    with pytest.raises(ValueError, match="cannot be bought"):
+    with pytest.raises(ValueError, match="cannot buy"):
         BuyPropertyUseCase().execute(game)
