@@ -156,3 +156,83 @@ def test_property_with_full_color_group_doubles_base_rent() -> None:
     # Grundmiete 2 wird auf 4 verdoppelt.
     assert bob.balance.amount == 1496
     assert alice.balance.amount == 1384
+
+
+def test_utility_rent_one_utility_uses_multiplier_4() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    alice = game.current_player
+
+    # Alice buys the utility at position 12
+    alice.move_to(Position(12))
+    game.has_rolled_this_turn = True
+    game.can_buy_current_tile = True
+    game.current_turn_tile_id = 12
+    BuyPropertyUseCase().execute(game)
+
+    # Bob lands on the utility and pays rent based on dice_value * 4
+    game.next_player()
+    bob = game.current_player
+    bob.move_to(Position(12))
+
+    dice_value = 3
+    PayRentUseCase().execute(game, dice_value=dice_value)
+
+    expected_rent = dice_value * 4
+    assert bob.balance.amount == 1500 - expected_rent
+    # Alice paid the utility price then received rent
+    utility_price = game.board.get_tile_at(Position(12)).price.amount
+    assert alice.balance.amount == 1500 - utility_price + expected_rent
+
+
+def test_utility_rent_two_utilities_uses_multiplier_10() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    alice = game.current_player
+
+    # Alice buys both utilities (12 and 28)
+    alice.move_to(Position(12))
+    game.has_rolled_this_turn = True
+    game.can_buy_current_tile = True
+    game.current_turn_tile_id = 12
+    BuyPropertyUseCase().execute(game)
+
+    alice.move_to(Position(28))
+    game.has_rolled_this_turn = True
+    game.can_buy_current_tile = True
+    game.purchased_this_turn = False
+    game.current_turn_tile_id = 28
+    BuyPropertyUseCase().execute(game)
+
+    # Bob lands on one utility
+    game.next_player()
+    bob = game.current_player
+    bob.move_to(Position(12))
+
+    dice_value = 5
+    PayRentUseCase().execute(game, dice_value=dice_value)
+
+    expected_rent = dice_value * 10
+    assert bob.balance.amount == 1500 - expected_rent
+
+
+def test_railroad_rent_four_railroads_flat_200() -> None:
+    game = StartGameUseCase().execute(["Alice", "Bob"])
+    alice = game.current_player
+
+    # Buy all four railroads (positions 5,15,25,35)
+    for pos in (5, 15, 25, 35):
+        alice.move_to(Position(pos))
+        game.has_rolled_this_turn = True
+        game.can_buy_current_tile = True
+        game.purchased_this_turn = False
+        game.current_turn_tile_id = pos
+        BuyPropertyUseCase().execute(game)
+
+    # Bob lands on a railroad and should pay flat 200
+    game.next_player()
+    bob = game.current_player
+    bob.move_to(Position(5))
+
+    PayRentUseCase().execute(game)
+
+    assert bob.balance.amount == 1500 - 200
+    assert alice.balance.amount == 1500 - sum(game.board.get_tile_at(Position(p)).price.amount for p in (5,15,25,35)) + 200
