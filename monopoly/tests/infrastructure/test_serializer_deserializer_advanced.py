@@ -5,7 +5,9 @@ Tests edge cases and complex game states.
 import pytest
 
 from monopoly.application.use_cases.start_game import StartGameUseCase
+from monopoly.domain.entities.ownable_tile import OwnableTile
 from monopoly.domain.entities.game import Game
+from monopoly.domain.value_objects.money import Money
 from monopoly.domain.value_objects.position import Position
 from monopoly.infrastructure.persistence.game_serializer import GameSerializer
 from monopoly.infrastructure.persistence.game_deserializer import GameDeserializer
@@ -61,7 +63,7 @@ class TestGameSerializerAdvanced:
         # Find serialized board tile
         board_data = payload.get("board", {})
         tiles = board_data.get("tiles", [])
-        target_tile = next((t for t in tiles if t.get("position_id") == 1), None)
+        target_tile = next((t for t in tiles if t.get("tile_id") == 1), None)
 
         assert target_tile is not None
         assert target_tile.get("house_count") == 3
@@ -96,7 +98,7 @@ class TestGameDeserializerAdvanced:
         """Verify that deserialization restores player state."""
         original_game = StartGameUseCase().execute(["Alice", "Bob"])
         original_alice = original_game.players[0]
-        original_alice.pay_rent(100)
+        original_alice.pay_money(Money(100))
 
         serializer = GameSerializer()
         deserializer = GameDeserializer()
@@ -166,7 +168,7 @@ class TestGameDeserializerAdvanced:
         alice.add_owned_tile(1)
         tile.house_count = 1
         alice.move_to(Position(5))
-        alice.pay_rent(50)
+        alice.pay_money(Money(50))
 
         serializer = GameSerializer()
         deserializer = GameDeserializer()
@@ -181,7 +183,7 @@ class TestGameDeserializerAdvanced:
 
         assert restored_alice.name == alice.name
         assert restored_alice.balance.amount == alice.balance.amount
-        assert restored_alice.position.position_id == 5
+        assert restored_alice.position.index == 5
         assert restored_tile.owner_name == "Alice"
         assert restored_tile.house_count == 1
 
@@ -208,9 +210,12 @@ class TestGameDeserializerEdgeCases:
         alice = original_game.players[0]
         bob = original_game.players[1]
 
-        # Alice and Bob own multiple properties
-        for i in range(1, 10):
+        # Alice and Bob own multiple ownable tiles.
+        for i in range(1, 16):
             tile = original_game.board.get_tile_at(Position(i))
+            if not isinstance(tile, OwnableTile):
+                continue
+
             owner = "Alice" if i % 2 == 0 else "Bob"
             tile.buy(owner)
             if owner == "Alice":
